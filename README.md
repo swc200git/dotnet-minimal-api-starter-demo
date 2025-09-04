@@ -28,8 +28,8 @@ A production-ready .NET 9 Minimal API with JWT authentication, CORS, EF Core, Sw
 
 **PowerShell/Bash:**
 ```bash
-git clone https://github.com/swc200git/dotnet9-minimal-api-starter-demo.git
-cd dotnet9-minimal-api-starter-demo
+git clone https://github.com/swc200git/dotnet-minimal-api-starter-demo.git
+cd dotnet-minimal-api-starter-demo
 cd Api
 dotnet run
 ```
@@ -42,7 +42,7 @@ Open the Swagger URL displayed in the console (typically http://localhost:5000/s
 
 **PowerShell/Bash:**
 ```bash
-cd dotnet9-minimal-api-starter-demo
+cd dotnet-minimal-api-starter-demo
 docker-compose up --build
 ```
 
@@ -52,7 +52,7 @@ API available at: http://localhost:8080/swagger
 
 **PowerShell/Bash:**
 ```bash
-cd dotnet9-minimal-api-starter-demo
+cd dotnet-minimal-api-starter-demo
 docker-compose -f docker-compose.sqlserver.yml up --build
 ```
 
