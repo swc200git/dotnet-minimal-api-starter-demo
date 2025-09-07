@@ -307,7 +307,7 @@ dotnet run
 
 ## Demo Video
 
-🎥 [Watch a 5-minute walkthrough](YOUR_YOUTUBE_LINK_HERE) showing:
+🎥 [Watch a 5-minute walkthrough](https://youtu.be/ykJtNlu7UGg) showing:
 - Local development setup
 - JWT authentication flow
 - Docker deployment
