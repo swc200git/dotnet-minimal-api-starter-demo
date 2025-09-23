@@ -1,7 +1,15 @@
 
 # .NET 9 Minimal API Starter
 
-A production-ready .NET 9 Minimal API with JWT authentication, CORS, EF Core, Swagger, and health checks. Automatically detects SQLite (development) or SQL Server (production) from connection strings.
+A practical starter for .NET 9 Minimal APIs with JWT auth, CORS, EF Core (SQLite/SQL Server auto-detect), Swagger, health checks, and Docker.
+
+## Who this is for
+
+- .NET developers who want a minimal, secure API starter with JWT, Swagger, and health checks.
+- Teams bootstrapping new REST services that use SQLite in development and SQL Server in staging/production.
+- Consultants and internal tool builders who need a clean, extensible baseline with EF Core and Docker.
+- Educators/mentors demonstrating auth + data + containerization basics in a small codebase.
+- Engineers who prefer Minimal APIs over MVC and want a lightweight surface to extend.
 
 ## Features
 
@@ -11,7 +19,7 @@ A production-ready .NET 9 Minimal API with JWT authentication, CORS, EF Core, Sw
 - **Cross-Origin**: CORS policy configured for local development
 - **Health Monitoring**: Built-in health checks endpoint
 - **Containerization**: Docker and Docker Compose ready
-- **Production Ready**: Structured logging, error handling, configuration management
+
 
 ## Architecture
 
@@ -63,7 +71,7 @@ API available at: http://localhost:8080/swagger
 ### 1. Get a JWT Token
 
 **Swagger UI (Recommended):**
-1. Open http://localhost:8080/swagger (or local port)
+1. Open http://localhost:8080/swagger for docker or  http://localhost:5000/swagger for local default
 2. Expand `POST /auth/token`
 3. Click "Try it out"
 4. Use credentials: `{"username":"demo","password":"demo"}`
@@ -78,7 +86,7 @@ Write-Host "Token: $token"
 
 **Bash (curl):**
 ```bash
-TOKEN=$(curl -s -X POST "http://localhost:8080/auth/token" \
+TOKEN=$(curl -s -X POST http://localhost:8080/auth/token \
   -H "Content-Type: application/json" \
   -d '{"username":"demo","password":"demo"}' | jq -r '.token')
 echo "Token: $TOKEN"
@@ -104,13 +112,13 @@ curl -H "Authorization: Bearer $TOKEN" "http://localhost:8080/secure/todos"
 
 ## API Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/health` | Health check | No |
-| GET | `/todos` | List all todos | No |
-| POST | `/todos` | Create a todo | No |
-| GET | `/secure/todos` | List todos (secured) | Yes |
-| POST | `/auth/token` | Get JWT token | No |
+| Method | Endpoint     | Description          | Auth Required |
+|--------|--------------|----------------------|---------------|
+| GET    | /health      | Health check         | No            |
+| GET    | /todos       | List all todos       | No            |
+| POST   | /todos       | Create a todo        | No            |
+| GET    | /secure/todos| List todos (secured) | Yes           |
+| POST   | /auth/token  | Get JWT token        | No            |
 
 ### Sample Requests
 
@@ -124,7 +132,7 @@ Invoke-RestMethod -Uri "http://localhost:8080/todos" -Method Post -ContentType "
 
 **Bash:**
 ```bash
-curl -X POST "http://localhost:8080/todos" \
+curl -s -X POST http://localhost:8080/todos \
   -H "Content-Type: application/json" \
   -d '{"title":"Learn .NET 9","done":false}'
 ```
@@ -213,8 +221,8 @@ Returns `200 OK` with `Healthy` status when the application is running properly.
 
 ```csharp
 // Add to Program.cs after existing endpoints
-app.MapGet("/api/users", async (AppDb db) =>
-    await db.Users.AsNoTracking().ToListAsync())
+app.MapGet("/api/todos", async (AppDb db) =>
+    await db.Todos.AsNoTracking().ToListAsync())
     .RequireAuthorization();  // Requires JWT token
 ```
 
@@ -298,16 +306,16 @@ dotnet run
 
 ## Production Considerations
 
-1. **Change JWT Secret**: Use a strong, random key in production
-2. **Update CORS Policy**: Restrict to your actual frontend origins
-3. **Use SQL Server**: For production workloads
-4. **Enable HTTPS**: Configure SSL certificates
-5. **Add Logging**: Implement structured logging with Serilog
-6. **Monitor Health**: Set up automated health check monitoring
+- Secrets & config: keep secrets out of the repo; rotate a strong `Jwt__Key`; use env vars/Key Vault (e.g., `ConnectionStrings__Default`, `Jwt__Key`).
+- HTTPS & CORS: enforce HTTPS/HSTS; lock CORS to known origins/methods/headers; restrict or secure Swagger in prod.
+- AuthZ: validate JWT issuer/audience/expiry/signing key; add role/policy-based authorization.
+- Data: prefer SQL Server for prod; run EF Core migrations on deploy; least-privilege DB creds; enable backups and test restores.
+- Reliability/observability (add): global exception handler with RFC 7807; structured logging + correlation IDs; retries/circuit breakers (Polly); telemetry via OpenTelemetry/App Insights.
+- Ops (add): health/readiness probes incl. DB check; CI/CD injects secrets and runs migrations; load-test and set SLOs (e.g., p95 latency).
 
 ## Demo Video
 
-🎥 [Watch a 5-minute walkthrough](https://youtu.be/ykJtNlu7UGg) showing:
+🎥 [Watch a 6-minute walkthrough](https://youtu.be/ykJtNlu7UGg) showing:
 - Local development setup
 - JWT authentication flow
 - Docker deployment
